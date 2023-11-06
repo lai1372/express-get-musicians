@@ -1,26 +1,47 @@
 const express = require("express");
 const app = express();
-const { Musician } = require("../models/index")
-const { db } = require("../db/connection")
+const { Musician } = require("../models/index");
+const { db } = require("../db/connection");
 
 const port = 3000;
 
-//TODO: Create a GET /musicians route to return all musicians 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/musicians", async (req, res)=>{
-    const musicians = await Musician.findAll()
-    res.json(musicians)
-})
+//TODO: Create a GET /musicians route to return all musicians
 
-app.get("/musicians/:id", async (req, res)=>{
-    const id = req.params.id
-    console.log(id)
-    const response = await Musician.findByPk(id)
-    res.json(response)
-})
+app.get("/musicians", async (req, res) => {
+  const musicians = await Musician.findAll();
+  res.json(musicians);
+});
 
+app.get("/musicians/:id", async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  const response = await Musician.findByPk(id);
+  res.json(response);
+});
 
+app.post("/musicians", async (req, res) => {
+  const newMusician = await Musician.create(req.body);
+  res.json(newMusician);
+});
 
+app.put("/musicians/:id", async (req, res) => {
+  const id = req.params.id;
+  console.log(req);
+  const musician = await Musician.findByPk(id);
+  const update = await musician.update({
+    name: `${req.body.name}`,
+    instrument: `${req.body.instrument}`,
+  });
+  res.json(update);
+});
 
+app.delete("/musicians/:id", async (req, res) => {
+  const id = req.params.id;
+  const deleted = await Musician.destroy({ where: { id: `${id}` } });
+  res.json(deleted);
+});
 
 module.exports = app;
