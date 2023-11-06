@@ -21,9 +21,18 @@ describe("./musicians endpoint", () => {
   test("should return a single musician when using parametric endpoints", async () => {
     const response = await request(app).get("/musicians/2");
     const data = JSON.parse(response.text);
-    console.log(data);
     expect(response.statusCode).toBe(200);
     expect(data.id).toBe(2);
     expect(data.name).toBe("Drake");
+  });
+
+  test("should accept put request to replace a musician", async () => {
+    const response = await request(app)
+      .put("/musicians/1")
+      .send({ name: "Greg Adams", instrument: "Trumpet" });
+    const musicianCheck = await request(app).get("/musicians/1");
+    const data = JSON.parse(musicianCheck.text);
+    expect(response.statusCode).toBe(200);
+    expect(data.name).toBe("Greg Adams");
   });
 });

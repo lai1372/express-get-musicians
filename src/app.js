@@ -17,7 +17,6 @@ app.get("/musicians", async (req, res) => {
 
 app.get("/musicians/:id", async (req, res) => {
   const id = req.params.id;
-  console.log(id);
   const response = await Musician.findByPk(id);
   res.json(response);
 });
@@ -29,7 +28,6 @@ app.post("/musicians", async (req, res) => {
 
 app.put("/musicians/:id", async (req, res) => {
   const id = req.params.id;
-  console.log(req);
   const musician = await Musician.findByPk(id);
   const update = await musician.update({
     name: `${req.body.name}`,
