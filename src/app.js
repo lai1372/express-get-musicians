@@ -22,7 +22,11 @@ app.get("/musicians/:id", async (req, res) => {
 });
 
 app.post("/musicians", async (req, res) => {
-  const newMusician = await Musician.create(req.body);
+  const body = req.body
+  const newMusician = await Musician.create({
+    name: body.name,
+    instrument: body.instrument
+  });
   res.json(newMusician);
 });
 

@@ -35,4 +35,16 @@ describe("./musicians endpoint", () => {
     expect(response.statusCode).toBe(200);
     expect(data.name).toBe("Greg Adams");
   });
+
+  test("should post / add new musician successfully", async () => {
+    const response = await request(app)
+      .post("/musicians")
+      .send({ name: "Jimi Hendrix", instrument: "Guitar" });
+    const data = JSON.parse(response.text);
+    const allMusicians = await Musician.findAll();
+    expect(response.statusCode).toBe(200);
+    expect(data.name).toBe("Jimi Hendrix");
+    expect(data.instrument).toBe("Guitar");
+    expect(allMusicians.length).toBe(4);
+  });
 });
