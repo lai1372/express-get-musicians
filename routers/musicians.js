@@ -5,7 +5,6 @@ const { Musician } = require("../models/index");
 musiciansRouter.use(express.json());
 musiciansRouter.use(express.urlencoded({ extended: true }));
 
-
 //CRUD OPERATIONS HERE
 musiciansRouter.get("/", async (req, res) => {
   const musicians = await Musician.findAll();
@@ -23,6 +22,8 @@ musiciansRouter.post(
   [
     check("name").not().isEmpty().trim(),
     check("instrument").not().isEmpty().trim(),
+    check("name").isLength({ min: 2, max: 20 }),
+    check("instrument").isLength({ min: 2, max: 20 }),
   ],
   async (req, res) => {
     const errors = validationResult(req);
@@ -39,15 +40,29 @@ musiciansRouter.post(
   }
 );
 
-musiciansRouter.put("/:id", async (req, res) => {
-  const id = req.params.id;
-  const musician = await Musician.findByPk(id);
-  const update = await musician.update({
-    name: `${req.body.name}`,
-    instrument: `${req.body.instrument}`,
-  });
-  res.json(update);
-});
+musiciansRouter.put(
+  "/:id",
+  [
+    check("name").not().isEmpty().trim(),
+    check("instrument").not().isEmpty().trim(),
+    check("name").isLength({ min: 2, max: 20 }),
+    check("instrument").isLength({ min: 2, max: 20 }),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      res.json({ error: errors.array() });
+    } else {
+      const id = req.params.id;
+      const musician = await Musician.findByPk(id);
+      const update = await musician.update({
+        name: `${req.body.name}`,
+        instrument: `${req.body.instrument}`,
+      });
+      res.json(update);
+    }
+  }
+);
 
 musiciansRouter.delete("/:id", async (req, res) => {
   const id = req.params.id;
