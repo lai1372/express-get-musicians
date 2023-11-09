@@ -56,22 +56,107 @@ describe("./musicians endpoint", () => {
     const errorTest2 = await request(app)
       .post("/musicians")
       .send({ name: "laila", instrument: "" });
+    console.log(errorTest2.body.error);
     expect(errorTest.body.error).toEqual([
+      {
+        type: "field",
+        value: "",
+        msg: "Invalid value",
+        path: "name",
+        location: "body",
+      },
+      {
+        type: "field",
+        value: "",
+        msg: "Invalid value",
+        path: "name",
+        location: "body",
+      },
+    ]);
+    expect(errorTest2.body.error).toEqual([
+      {
+        type: "field",
+        value: "",
+        msg: "Invalid value",
+        path: "instrument",
+        location: "body",
+      },
+      {
+        type: "field",
+        value: "",
+        msg: "Invalid value",
+        path: "instrument",
+        location: "body",
+      },
+    ]);
+  });
+
+  test("POST - should throw an error if either values length is less than 2 or more than 20", async () => {
+    const errorTest3 = await request(app)
+      .post("/musicians")
+      .send({ name: "i", instrument: "o" });
+
+    const errorTest4 = await request(app)
+      .post("/musicians")
+      .send({ name: "ioplkeighftdhgsythfdd", instrument: "og" });
+    expect(errorTest3.body.error).toEqual([
       {
         location: "body",
         msg: "Invalid value",
         path: "name",
         type: "field",
-        value: "",
+        value: "i",
       },
-    ]);
-    expect(errorTest2.body.error).toEqual([
       {
         location: "body",
         msg: "Invalid value",
         path: "instrument",
         type: "field",
-        value: "",
+        value: "o",
+      },
+    ]);
+    expect(errorTest4.body.error).toEqual([
+      {
+        location: "body",
+        msg: "Invalid value",
+        path: "name",
+        type: "field",
+        value: "ioplkeighftdhgsythfdd",
+      },
+    ]);
+  });
+
+  test("PUT - should throw an error if the sent information is less than 2 or greater than 20", async () => {
+    const errorTest5 = await request(app)
+      .put("/musicians/1")
+      .send({ name: "i", instrument: "o" });
+
+    const errorTest6 = await request(app)
+      .put("/musicians/1")
+      .send({ name: "ioplkeighftdhgsythfdd", instrument: "og" });
+    expect(errorTest5.body.error).toEqual([
+      {
+        location: "body",
+        msg: "Invalid value",
+        path: "name",
+        type: "field",
+        value: "i",
+      },
+      {
+        location: "body",
+        msg: "Invalid value",
+        path: "instrument",
+        type: "field",
+        value: "o",
+      },
+    ]);
+    expect(errorTest6.body.error).toEqual([
+      {
+        location: "body",
+        msg: "Invalid value",
+        path: "name",
+        type: "field",
+        value: "ioplkeighftdhgsythfdd",
       },
     ]);
   });
