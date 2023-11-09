@@ -8,6 +8,7 @@ const { db } = require("./db/connection");
 const { Musician } = require("./models/index");
 const app = require("./src/app");
 const seedMusician = require("./seedData");
+const exp = require("constants");
 
 describe("./musicians endpoint", () => {
   // Write your tests here
@@ -46,5 +47,32 @@ describe("./musicians endpoint", () => {
     expect(data.name).toBe("Jimi Hendrix");
     expect(data.instrument).toBe("Guitar");
     expect(allMusicians.length).toBe(4);
+  });
+
+  test("POST - should return an error if either value is empty", async () => {
+    const errorTest = await request(app)
+      .post("/musicians")
+      .send({ name: "", instrument: "clarinet" });
+    const errorTest2 = await request(app)
+      .post("/musicians")
+      .send({ name: "laila", instrument: "" });
+    expect(errorTest.body.error).toEqual([
+      {
+        location: "body",
+        msg: "Invalid value",
+        path: "name",
+        type: "field",
+        value: "",
+      },
+    ]);
+    expect(errorTest2.body.error).toEqual([
+      {
+        location: "body",
+        msg: "Invalid value",
+        path: "instrument",
+        type: "field",
+        value: "",
+      },
+    ]);
   });
 });
